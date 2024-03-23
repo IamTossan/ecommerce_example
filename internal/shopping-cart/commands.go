@@ -79,3 +79,26 @@ type CancelShoppingCartCommand struct {
 	*CommandMetadata
 	Data CancelShoppingCartCommandBody `json:"data"`
 }
+
+func NewCancelShoppingCartCommand(id uuid.UUID) CancelShoppingCartCommand {
+	eventId, _ := uuid.NewUUID()
+	clientId, _ := uuid.NewUUID()
+
+	return CancelShoppingCartCommand{
+		CommandHeader: &CommandHeader{
+			EventId:   eventId,
+			Type:      "cancel_shopping_cart",
+			Kind:      "command",
+			Timestamp: time.Now(),
+			StreamId:  id,
+		},
+		CommandMetadata: &CommandMetadata{
+			IsTestEvent: false,
+			IssuedBy:    clientId.String(),
+		},
+		Data: CancelShoppingCartCommandBody{
+			Id:       id,
+			ClientId: clientId,
+		},
+	}
+}

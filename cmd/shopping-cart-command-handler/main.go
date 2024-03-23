@@ -14,5 +14,5 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	app.StartSubscription(ctx, "commands.>")
+	app.StartSubscribeCommands(ctx, "commands.>")
 }

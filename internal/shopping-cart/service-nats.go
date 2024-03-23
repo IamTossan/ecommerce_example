@@ -24,3 +24,13 @@ func (n *NatsService) SendCommand(ctx context.Context, command Command) error {
 	n.Nc.Publish("commands."+command.GetType(), payload)
 	return nil
 }
+
+func (n *NatsService) SendEvent(ctx context.Context, event Event) error {
+	payload, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+
+	n.Nc.Publish("events."+event.GetStreamId()+"."+event.GetType(), payload)
+	return nil
+}

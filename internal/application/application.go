@@ -12,7 +12,7 @@ import (
 
 type App struct {
 	env    *Environment
-	router http.Handler
+	Router http.Handler
 	nc     *nats.Conn
 	es     *esdb.Client
 }
@@ -30,7 +30,7 @@ func New() *App {
 func (a *App) StartServer(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    a.env.Port,
-		Handler: a.router,
+		Handler: a.Router,
 	}
 
 	ch := make(chan error, 1)

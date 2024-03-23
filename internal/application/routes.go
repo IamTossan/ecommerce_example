@@ -16,9 +16,9 @@ func (a *App) LoadRoutes() {
 		w.Write([]byte("hello"))
 	})
 
-	router.Route("/shopping-cart", a.LoadShoppingCartRoutes)
+	router.Route("/shopping-carts", a.LoadShoppingCartRoutes)
 
-	a.router = router
+	a.Router = router
 }
 
 func (a *App) LoadShoppingCartRoutes(router chi.Router) {
@@ -26,8 +26,12 @@ func (a *App) LoadShoppingCartRoutes(router chi.Router) {
 		Nats: &shoppingcart.NatsService{
 			Nc: a.nc,
 		},
+		Esdb: &shoppingcart.EsdbService{
+			Esdb: a.es,
+		},
 	}
 
+	router.Get("/", shoppingCartHandler.List)
 	router.Post("/", shoppingCartHandler.Create)
 	router.Post("/{id}/cancel", shoppingCartHandler.Cancel)
 	router.Post("/{id}/confirm", shoppingCartHandler.Confirm)

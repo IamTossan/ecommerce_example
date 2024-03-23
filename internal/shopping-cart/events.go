@@ -78,17 +78,15 @@ type ShoppingCartOpenedEvent struct {
 	Data ShoppingCartOpenedBody `json:"data"`
 }
 
-func NewShoppingCartOpenedEvent(clientId uuid.UUID) ShoppingCartOpenedEvent {
+func NewShoppingCartOpenedEvent(streamId, clientId uuid.UUID) *ShoppingCartOpenedEvent {
 	eventHeader := NewEventHeader("shopping_cart_opened")
-	streamId, _ := uuid.NewUUID()
 	eventHeader.StreamId = streamId
 	eventHeader.StreamPosition = 0
-	shoppingCartId, _ := uuid.NewUUID()
 
-	return ShoppingCartOpenedEvent{
+	return &ShoppingCartOpenedEvent{
 		EventHeader: eventHeader,
 		Data: ShoppingCartOpenedBody{
-			ShoppingCartId: shoppingCartId,
+			ShoppingCartId: streamId,
 			ClientId:       clientId,
 			OpenedAt:       eventHeader.Timestamp,
 		},
