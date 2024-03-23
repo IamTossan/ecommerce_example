@@ -1,35 +1,21 @@
 version: "3"
 services:
-  nats:
-    image: nats:2.10
-    ports:
-      - 4222:4222
-      - 8222:8222
-    command: "-js -m 8222 --store_dir /data"
-    volumes:
-      - nats_data:/data
-  esdb:
-    image: eventstore/eventstore:23.10.0-bookworm-slim
+  db:
+    image: postgres
+    restart: always
     environment:
-      - EVENTSTORE_CLUSTER_SIZE=1
-      - EVENTSTORE_RUN_PROJECTIONS=All
-      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
-      - EVENTSTORE_EXT_TCP_PORT=1113
-      - EVENTSTORE_HTTP_PORT=2113
-      - EVENTSTORE_INSECURE=true
-      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
-      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecommerce
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
     ports:
-      - "1113:1113"
-      - "2113:2113"
+      - "5432:5432"
     volumes:
-      - type: volume
-        source: eventstore-volume-data
-        target: /var/lib/eventstore
-      - type: volume
-        source: eventstore-volume-logs
-        target: /var/log/eventstore
+      - pg_data:/var/lib/postgresql/data
 volumes:
-  nats_data:
-  eventstore-volume-data:
-  eventstore-volume-logs:
+  pg_data:
